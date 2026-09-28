@@ -9,29 +9,69 @@ const log = {
   7: [10],
   8: [10],
   9: [10],
-  10: [10],
+  10: [10, 10, 10],
 };
 //12 + 12 + 16= 40
 
 /* el plan:
 
 loop through each score
+check for strike or spare
+if not strike or spare just add the turns
+if strike:
+    recursively look for the next two turns
+        if strike:
+            recursive again
+        if strike and is the last turn:
+            return 10
+        if it goes too far:
+            return 0
+        else:
+            return the value
+if spare:
+    add 10 + next frame turn 1 
+
+frame 10:
+    i guess do a switch case or something idk
 
 */
 
 function checkStrikeValue(history, frame, count) {
-  if (!count) {
-    count = 1;
+  // if (!count) {
+  //     count = 1;
+  // }
+
+  // if (frame > Object.keys(history).length) {
+  //     return 0;
+  // }
+
+  // if (history[frame][0] >= 10 && count <= 2) {
+  //     return 10 + checkStrikeValue(history, frame + 1, count + 1);
+  // }
+
+  // return history[frame][0] + (history[frame][1] ? history[frame][1] : 0);
+
+  if (frame == 10) {
+    return history[frame][0] + (history[frame][1] ? history[frame][1] : 0);
   }
 
-  console.log(history[frame], "asdasdasda");
-
-  if (count >= 2 || history[frame][0] == undefined) {
-    return 10;
+  if (frame > Object.keys(history).length) {
+    return 0;
   }
 
-  if (history[frame].at(0) >= 10) {
-    return 10 + checkStrikeValue(history, frame + 1, count + 1);
+  if (history[frame][0] >= 10) {
+    if (frame + 1 > Object.keys(history).length) {
+      return 10;
+    }
+
+    if (history[frame + 1][0] >= 10) {
+      return 20;
+    }
+    return (
+      10 +
+      history[frame + 1][0] +
+      (history[frame + 1][1] ? history[frame + 1][1] : 0)
+    );
   }
 
   return history[frame][0] + history[frame][1];
@@ -42,6 +82,22 @@ function getScore(history) {
   for (let frame = 1; frame <= 10; frame++) {
     console.log(totalScore);
     console.log("\n");
+
+    if (frame == 10) {
+      const turn1 = history[frame][0];
+      const turn2 = history[frame][1];
+
+      let accountForThirdTurn = false;
+
+      if (turn1 == 10 || turn2 == 10) {
+        accountForThirdTurn = true;
+      }
+
+      totalScore +=
+        turn1 + turn2 + (accountForThirdTurn ? history[frame][2] : 0);
+
+      break;
+    }
 
     const turn1 = history[frame][0];
     const turn2 = history[frame][1];
