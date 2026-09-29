@@ -25,45 +25,6 @@ const log2 = {
   10: [8, 1],
 };
 
-const log3 = {
-  1: [8,0],
-  2: [9,1],
-  3: [6,1],
-  4: [1,6],
-  5: [2,5],
-  6: [10],
-  7: [3,5],
-  8: [5,3],
-  9: [9,1],
-  10: [0,7],
-};
-
-const log4 = {
-    1: [10],
-    2: [4, 3],
-    3: [8, 1],
-    4: [10],
-    5: [5, 5],
-    6: [6, 2],
-    7: [10],
-    8: [3, 4],
-    9: [9, 0],
-    10: [7, 2]
-};
-
-const log5 = {
-    1: [8, 1],
-    2: [10],
-    3: [7, 2],
-    4: [6, 4],
-    5: [8, 0],
-    6: [10],
-    7: [10],
-    8: [9, 1],
-    9: [10],
-    10: [10, 8, 2]
-};
-
 //12 + 12 + 16= 40
 
 /* el plan:
@@ -72,12 +33,20 @@ loop through each score
 check for strike or spare
 if not strike or spare just add the turns
 if strike:
-    ok i dont feel like explaining this so just look at the function "checkStrikeValue" cuz i wrote some comments
-if spare: 
+    recursively look for the next two turns
+        if strike:
+            recursive again
+        if strike and is the last turn:
+            return 10
+        if it goes too far:
+            return 0
+        else:
+            return the value
+if spare:
     add 10 + next frame turn 1 
 
 frame 10:
-    add up stuff
+    i guess do a switch case or something idk
 
 */
 
@@ -96,37 +65,28 @@ function checkStrikeValue(history, frame, count) {
 
   // return history[frame][0] + (history[frame][1] ? history[frame][1] : 0);
 
-  // on frame 10 you just add the next two rolls
   if (frame == 10) {
     return history[frame][0] + (history[frame][1] ? history[frame][1] : 0);
   }
 
-  // if overcap
   if (frame > Object.keys(history).length) {
     return 0;
   }
 
-
-  // if strike
   if (history[frame][0] >= 10) {
-    // if goes over frame limit
     if (frame + 1 > Object.keys(history).length) {
       return 10;
     }
 
-    // if strike again
     if (history[frame + 1][0] >= 10) {
       return 20;
     }
-
-    // if no strike
     return (
       10 +
-      history[frame + 1][0]
+      history[frame + 1][0] +
+      (history[frame + 1][1] ? history[frame + 1][1] : 0)
     );
   }
-
-  // if no strike
 
   return history[frame][0] + history[frame][1];
 }
@@ -137,7 +97,6 @@ function getScore(history) {
     console.log(totalScore);
     console.log("\n");
 
-    // el special frame 10
     if (frame == 10) {
       const turn1 = history[frame][0];
       const turn2 = history[frame][1];
@@ -177,4 +136,4 @@ function getScore(history) {
   return totalScore;
 }
 
-console.log(getScore(log4));
+console.log(getScore(log2));
